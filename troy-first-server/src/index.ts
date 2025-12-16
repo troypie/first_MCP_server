@@ -160,7 +160,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           text: `Created note ${id}: ${title}`
         }]
       };
-    },
+    }
     case "calculate": {
     const { operation, a, b } = request.params.arguments as { operation: string; a: number; b: number };
     let result: number;
