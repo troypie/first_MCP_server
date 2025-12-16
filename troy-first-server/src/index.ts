@@ -116,6 +116,23 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           },
           required: ["title", "content"]
         }
+      },
+      {
+        name: "calculate",
+        description: "Perform simple calculations (add, subtract, multiply, divide)",
+        inputSchema: {
+          type: "object",
+          properties: {
+            operation: {
+              type: "string",
+              enum: ["add", "subtract", "multiply", "divide"],
+              description: "The mathematical operation to perform",
+            },
+            a: { type: "number", description: "First number" },
+            b: { type: "number", description: "Second number" },
+          },
+          required: ["operation", "a", "b"],
+        },
       }
     ]
   };
@@ -143,7 +160,23 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           text: `Created note ${id}: ${title}`
         }]
       };
+    },
+    case "calculate": {
+    const { operation, a, b } = request.params.arguments as { operation: string; a: number; b: number };
+    let result: number;
+
+    switch (operation) {
+      case "add": result = a + b; break;
+      case "subtract": result = a - b; break;
+      case "multiply": result = a * b; break;
+      case "divide": result = a / b; break;
+      default: throw new Error("Unknown operation");
     }
+
+    return {
+      content: [{ type: "text", text: String(result) }],
+    };
+  }
 
     default:
       throw new Error("Unknown tool");
